@@ -24,12 +24,18 @@
 
 	<authentication-manager xmlns="http://www.springframework.org/schema/security">
 		<authentication-provider>
-			<user-service>
-				<user name="marissa" password="wombat" authorities="ROLE_USER" />
-				<user name="sam" password="kangaroo" authorities="ROLE_USER" />
-			</user-service>
+            <jdbc-user-service data-source-ref="jdbcTemplate" />
 		</authentication-provider>
 	</authentication-manager>
+
+    <bean id="jdbcTemplate"
+      class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+      <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+      <property name="url" value="jdbc:mysql://localhost:3306/oauthdb"/>
+      <property name="username" value="root"/>
+      <property name="password" value=""/>
+   </bean>
+
 
 	<!--apply the oauth client context -->
 	<oauth:client id="oauth2ClientFilter" />

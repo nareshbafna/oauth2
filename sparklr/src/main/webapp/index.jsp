@@ -32,7 +32,7 @@
       <h2>Login</h2>
       <form id="loginForm" name="loginForm" action="<c:url value="/login.do"/>" method="post">
         <p><label>Username: <input type='text' name='j_username' value="marissa"></label></p>
-        <p><label>Password: <input type='text' name='j_password' value="koala"></label></p>
+        <p><label>Password: <input type='text' name='j_password' value="wombat"></label></p>
         
         <p><input name="login" value="Login" type="submit"></p>
       </form>

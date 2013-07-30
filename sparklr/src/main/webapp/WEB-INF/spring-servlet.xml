@@ -105,10 +105,7 @@
 
 	<authentication-manager alias="authenticationManager" xmlns="http://www.springframework.org/schema/security">
 		<authentication-provider>
-			<user-service id="userDetailsService">
-				<user name="marissa" password="koala" authorities="ROLE_USER" />
-				<user name="paul" password="emu" authorities="ROLE_USER" />
-			</user-service>
+            <jdbc-user-service  id="userDetailsService" data-source-ref="jdbcTemplate" />
 		</authentication-provider>
 	</authentication-manager>
 

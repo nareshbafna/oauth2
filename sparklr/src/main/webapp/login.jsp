@@ -27,9 +27,9 @@
 
 		<h2>Login</h2>
 
-		<p>We've got a grand total of 2 users: marissa and paul. Go ahead
-			and log in. Marissa's password is "koala" and Paul's password is
-			"emu".</p>
+		<p>We've got a grand total of 2 users: marissa and sam. Go ahead
+			and log in. Marissa's password is "wombat" and sam's password is
+			"kangaroo".</p>
 		<form id="loginForm" name="loginForm"
 			action="<c:url value="/login.do"/>" method="post">
 			<p>
@@ -38,7 +38,7 @@
 			</p>
 			<p>
 				<label>Password: <input type='text' name='j_password'
-					value="koala" /></label>
+					value="wombat" /></label>
 			</p>
 
 			<p>
