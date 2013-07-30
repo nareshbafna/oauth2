@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.resource.UserRedirectRequiredException;
 import org.springframework.security.oauth2.client.token.DefaultAccessTokenRequest;
@@ -33,11 +34,11 @@ public class TestAuthorizationCodeGrant {
 	private AuthorizationCodeResourceDetails resource = new AuthorizationCodeResourceDetails();
 
 	{
-		resource.setAccessTokenUri(serverRunning.getUrl("/sparklr2/oauth/token"));
+		resource.setAccessTokenUri(serverRunning.getUrl("/sparklr/oauth/token"));
 		resource.setClientId("my-client-with-registered-redirect");
 		resource.setId("sparklr");
 		resource.setScope(Arrays.asList("trust"));
-		resource.setUserAuthorizationUri(serverRunning.getUrl("/sparklr2/oauth/authorize"));
+		resource.setUserAuthorizationUri(serverRunning.getUrl("/sparklr/oauth/authorize"));
 	}
 
 	@Test
@@ -46,7 +47,7 @@ public class TestAuthorizationCodeGrant {
 		OAuth2RestTemplate template = new OAuth2RestTemplate(resource);
 		resource.setPreEstablishedRedirectUri("http://anywhere.com");
 		try {
-			template.getForObject(serverRunning.getUrl("/tonr2/photos"), String.class);
+			template.getForObject(serverRunning.getUrl("/tonr/photos"), String.class);
 			fail("Expected UserRedirectRequiredException");
 		}
 		catch (UserRedirectRequiredException e) {
@@ -72,11 +73,12 @@ public class TestAuthorizationCodeGrant {
 
 	@Test
 	public void testTokenAcquisitionWithCorrectContext() throws Exception {
+        serverRunning.setPort(8080);
 
 		MultiValueMap<String, String> form = new LinkedMultiValueMap<String, String>();
 		form.add("j_username", "marissa");
 		form.add("j_password", "wombat");
-		HttpHeaders response = serverRunning.postForHeaders("/tonr2/login.do", form);
+		HttpHeaders response = serverRunning.postForHeaders("/tonr/login.do", form);
 		String cookie = response.getFirst("Set-Cookie");
 
 		HttpHeaders headers = new HttpHeaders();
@@ -84,7 +86,7 @@ public class TestAuthorizationCodeGrant {
 		// headers.setAccept(Collections.singletonList(MediaType.ALL));
 		headers.setAccept(MediaType.parseMediaTypes("image/png,image/*;q=0.8,*/*;q=0.5"));
 
-		String location = serverRunning.getForRedirect("/tonr2/sparklr/photos/1", headers);
+		String location = serverRunning.getForRedirect("/tonr/sparklr/photos/1", headers);
 		location = authenticateAndApprove(location);
 
 		assertTrue("Redirect location should be to the original photo URL: " + location, location.contains("photos/1"));

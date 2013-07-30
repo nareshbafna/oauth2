@@ -48,7 +48,7 @@ public class TestRefreshTokenSupport {
 	private void verifyTokenResponse(String accessToken, HttpStatus status) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", String.format("%s %s", OAuth2AccessToken.BEARER_TYPE, accessToken));
-		assertEquals(status, serverRunning.getStatusCode("/sparklr2/photos?format=json", headers));		
+		assertEquals(status, serverRunning.getStatusCode("/sparklr/photos?format=json", headers));
 	}
 
 	private OAuth2AccessToken refreshAccessToken(String refreshToken) {
@@ -59,7 +59,7 @@ public class TestRefreshTokenSupport {
 		formData.add("refresh_token", refreshToken);
 
 		@SuppressWarnings("rawtypes")
-		ResponseEntity<Map> response = serverRunning.postForMap("/sparklr2/oauth/token", formData);
+		ResponseEntity<Map> response = serverRunning.postForMap("/sparklr/oauth/token", formData);
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 		assertEquals("no-store", response.getHeaders().getFirst("Cache-Control"));
 		@SuppressWarnings("unchecked")
@@ -72,7 +72,7 @@ public class TestRefreshTokenSupport {
 		MultiValueMap<String, String> formData = getTokenFormData(scope, clientId);
 
 		@SuppressWarnings("rawtypes")
-		ResponseEntity<Map> response = serverRunning.postForMap("/sparklr2/oauth/token", formData);
+		ResponseEntity<Map> response = serverRunning.postForMap("/sparklr/oauth/token", formData);
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 		assertEquals("no-store", response.getHeaders().getFirst("Cache-Control"));
 

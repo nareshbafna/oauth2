@@ -68,7 +68,7 @@ public class SparklrUserApprovalHandler extends TokenServicesUserApprovalHandler
 			return false;
 		}
 
-		String flag = authorizationRequest.getApprovalParameters().get(OAuth2Utils.USER_OAUTH_APPROVAL);
+		String flag = authorizationRequest.getApprovalParameters().get(AuthorizationRequest.USER_OAUTH_APPROVAL);
 		boolean approved = flag != null && flag.toLowerCase().equals("true");
 
 		return approved

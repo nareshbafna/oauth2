@@ -125,7 +125,7 @@ public class TestAuthorizationCodeProvider {
 		formData.add("j_username", "marissa");
 		formData.add("j_password", "koala");
 
-		String location = "/sparklr2/login.do";
+		String location = "/sparklr/login.do";
 		ResponseEntity<Void> result = serverRunning.postForStatus(location, formData);
 		assertEquals(HttpStatus.FOUND, result.getStatusCode());
 		String cookie = result.getHeaders().getFirst("Set-Cookie");
@@ -138,7 +138,7 @@ public class TestAuthorizationCodeProvider {
 	@Test
 	public void testResourceIsProtected() throws Exception {
 		// first make sure the resource is actually protected.
-		assertEquals(HttpStatus.UNAUTHORIZED, serverRunning.getStatusCode("/sparklr2/photos?format=json"));
+		assertEquals(HttpStatus.UNAUTHORIZED, serverRunning.getStatusCode("/sparklr/photos?format=json"));
 	}
 
 	@Test
@@ -147,7 +147,7 @@ public class TestAuthorizationCodeProvider {
 
 		AccessTokenRequest request = context.getAccessTokenRequest();
 		request.setCurrentUri("http://anywhere");
-		request.add(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
+		request.add(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
 
 		String location = null;
 
@@ -161,7 +161,7 @@ public class TestAuthorizationCodeProvider {
 		}
 
 		assertNotNull(location);
-		assertEquals(serverRunning.getUrl("/sparklr2/login.jsp"), location);
+		assertEquals(serverRunning.getUrl("/sparklr/login.jsp"), location);
 
 	}
 
@@ -177,7 +177,7 @@ public class TestAuthorizationCodeProvider {
 
 		AccessTokenRequest request = context.getAccessTokenRequest();
 		assertNotNull(request.getAuthorizationCode());
-		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr2/photos?format=json"));
+		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr/photos?format=json"));
 
 	}
 
@@ -269,7 +269,7 @@ public class TestAuthorizationCodeProvider {
 
 		AccessTokenRequest request = context.getAccessTokenRequest();
 		assertNotNull(request.getAuthorizationCode());
-		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr2/photos?format=json"));
+		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr/photos?format=json"));
 
 	}
 
@@ -286,7 +286,7 @@ public class TestAuthorizationCodeProvider {
 		String redirectUri = "http://anywhere?key=value";
 		String clientId = "my-client-with-registered-redirect";
 
-		UriBuilder uri = serverRunning.buildUri("/sparklr2/oauth/authorize").queryParam("response_type", "code")
+		UriBuilder uri = serverRunning.buildUri("/sparklr/oauth/authorize").queryParam("response_type", "code")
 				.queryParam("state", "mystateid").queryParam("scope", scope);
 		if (clientId != null) {
 			uri.queryParam("client_id", clientId);
@@ -309,7 +309,7 @@ public class TestAuthorizationCodeProvider {
 		resource.setScope(Arrays.asList("trust"));
 		approveAccessTokenGrant("http://anywhere?key=value", true);
 		assertNotNull(context.getAccessToken());
-		ResponseEntity<String> response = serverRunning.getForString("/sparklr2/photos?format=json");
+		ResponseEntity<String> response = serverRunning.getForString("/sparklr/photos?format=json");
 		assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
 		String authenticate = response.getHeaders().getFirst("WWW-Authenticate");
 		assertNotNull(authenticate);
@@ -323,7 +323,7 @@ public class TestAuthorizationCodeProvider {
 		// now make sure an unauthorized request fails the right way.
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", String.format("%s %s", OAuth2AccessToken.BEARER_TYPE, "FOO"));
-		ResponseEntity<String> response = serverRunning.getForString("/sparklr2/photos?format=json", headers);
+		ResponseEntity<String> response = serverRunning.getForString("/sparklr/photos?format=json", headers);
 		assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
 
 		String authenticate = response.getHeaders().getFirst("WWW-Authenticate");
@@ -376,7 +376,7 @@ public class TestAuthorizationCodeProvider {
 	}
 
 	private String getAuthorizeUrl(String clientId, String redirectUri, String scope) {
-		UriBuilder uri = serverRunning.buildUri("/sparklr2/oauth/authorize").queryParam("response_type", "code")
+		UriBuilder uri = serverRunning.buildUri("/sparklr/oauth/authorize").queryParam("response_type", "code")
 				.queryParam("state", "mystateid").queryParam("scope", scope);
 		if (clientId != null) {
 			uri.queryParam("client_id", clientId);
@@ -398,7 +398,7 @@ public class TestAuthorizationCodeProvider {
 		formData.add("j_password", "koala");
 
 		// Should be redirected to the original URL, but now authenticated
-		ResponseEntity<Void> result = serverRunning.postForStatus("/sparklr2/login.do", headers, formData);
+		ResponseEntity<Void> result = serverRunning.postForStatus("/sparklr/login.do", headers, formData);
 		assertEquals(HttpStatus.FOUND, result.getStatusCode());
 
 		assertTrue(result.getHeaders().containsKey("Set-Cookie"));
@@ -446,7 +446,7 @@ public class TestAuthorizationCodeProvider {
 		assertNull(request.getAuthorizationCode());
 
 		// The approval (will be processed on the next attempt to obtain an access token)...
-		request.set(OAuth2Utils.USER_OAUTH_APPROVAL, "" + approved);
+		request.set(AuthorizationRequest.USER_OAUTH_APPROVAL, "" + approved);
 
 	}
 
@@ -457,8 +457,8 @@ public class TestAuthorizationCodeProvider {
 			setScope(Arrays.asList("read"));
 			setId(getClientId());
 			TestAuthorizationCodeProvider test = (TestAuthorizationCodeProvider) target;
-			setAccessTokenUri(test.serverRunning.getUrl("/sparklr2/oauth/token"));
-			setUserAuthorizationUri(test.serverRunning.getUrl("/sparklr2/oauth/authorize"));
+			setAccessTokenUri(test.serverRunning.getUrl("/sparklr/oauth/token"));
+			setUserAuthorizationUri(test.serverRunning.getUrl("/sparklr/oauth/authorize"));
 		}
 	}
 

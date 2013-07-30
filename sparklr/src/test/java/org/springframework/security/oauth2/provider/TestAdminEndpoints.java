@@ -33,7 +33,7 @@ public class TestAdminEndpoints {
 	@Test
 	@OAuth2ContextConfiguration(ResourceOwnerReadOnly.class)
 	public void testListTokensByUser() throws Exception {
-		ResponseEntity<String> result = serverRunning.getForString("/sparklr2/oauth/users/marissa/tokens");
+		ResponseEntity<String> result = serverRunning.getForString("/sparklr/oauth/users/marissa/tokens");
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 		// System.err.println(result.getBody());
 		assertTrue(result.getBody().contains(context.getAccessToken().getValue()));
@@ -53,10 +53,10 @@ public class TestAdminEndpoints {
 				HttpStatus.NO_CONTENT,
 				serverRunning
 						.getRestTemplate()
-						.exchange(serverRunning.getUrl("/sparklr2/oauth/users/{user}/tokens/{token}"),
+						.exchange(serverRunning.getUrl("/sparklr/oauth/users/{user}/tokens/{token}"),
 								HttpMethod.DELETE, request, Void.class, "marissa", token.getValue()).getStatusCode());
 
-		ResponseEntity<String> result = serverRunning.getForString("/sparklr2/oauth/users/marissa/tokens", headers);
+		ResponseEntity<String> result = serverRunning.getForString("/sparklr/oauth/users/marissa/tokens", headers);
 		assertEquals(HttpStatus.UNAUTHORIZED, result.getStatusCode());
 		assertTrue(result.getBody().contains("invalid_token"));
 
@@ -65,7 +65,7 @@ public class TestAdminEndpoints {
 	@Test
 	@OAuth2ContextConfiguration(ClientCredentialsReadOnly.class)
 	public void testClientListsTokensOfUser() throws Exception {
-		ResponseEntity<String> result = serverRunning.getForString("/sparklr2/oauth/users/marissa/tokens");
+		ResponseEntity<String> result = serverRunning.getForString("/sparklr/oauth/users/marissa/tokens");
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 		assertTrue(result.getBody().startsWith("["));
 		assertTrue(result.getBody().endsWith("]"));
@@ -75,14 +75,14 @@ public class TestAdminEndpoints {
 	@Test
 	@OAuth2ContextConfiguration(ResourceOwnerReadOnly.class)
 	public void testCannotListTokensOfAnotherUser() throws Exception {
-		assertEquals(HttpStatus.FORBIDDEN, serverRunning.getStatusCode("/sparklr2/oauth/users/foo/tokens"));
+		assertEquals(HttpStatus.FORBIDDEN, serverRunning.getStatusCode("/sparklr/oauth/users/foo/tokens"));
 	}
 
 	@Test
 	@OAuth2ContextConfiguration(ClientCredentialsReadOnly.class)
 	public void testListTokensByClient() throws Exception {
 		ResponseEntity<String> result = serverRunning
-				.getForString("/sparklr2/oauth/clients/my-client-with-registered-redirect/tokens");
+				.getForString("/sparklr/oauth/clients/my-client-with-registered-redirect/tokens");
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 		assertTrue(result.getBody().contains(context.getAccessToken().getValue()));
 	}
@@ -91,7 +91,7 @@ public class TestAdminEndpoints {
 	@OAuth2ContextConfiguration(ResourceOwnerReadOnly.class)
 	public void testUserCannotListTokensOfClient() throws Exception {
 		assertEquals(HttpStatus.FORBIDDEN,
-				serverRunning.getStatusCode("/sparklr2/oauth/clients/my-client-with-registered-redirect/tokens"));
+				serverRunning.getStatusCode("/sparklr/oauth/clients/my-client-with-registered-redirect/tokens"));
 	}
 
 	static class ResourceOwnerReadOnly extends ResourceOwnerPasswordResourceDetails {
@@ -102,7 +102,7 @@ public class TestAdminEndpoints {
 			setUsername("marissa");
 			setPassword("koala");
 			TestAdminEndpoints test = (TestAdminEndpoints) target;
-			setAccessTokenUri(test.serverRunning.getUrl("/sparklr2/oauth/token"));
+			setAccessTokenUri(test.serverRunning.getUrl("/sparklr/oauth/token"));
 		}
 	}
 
@@ -112,7 +112,7 @@ public class TestAdminEndpoints {
 			setId(getClientId());
 			setScope(Arrays.asList("read"));
 			TestAdminEndpoints test = (TestAdminEndpoints) target;
-			setAccessTokenUri(test.serverRunning.getUrl("/sparklr2/oauth/token"));
+			setAccessTokenUri(test.serverRunning.getUrl("/sparklr/oauth/token"));
 		}
 	}
 

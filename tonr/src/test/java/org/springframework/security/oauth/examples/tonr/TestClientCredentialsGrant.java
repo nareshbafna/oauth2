@@ -28,7 +28,7 @@ public class TestClientCredentialsGrant {
 
 		ClientCredentialsResourceDetails resource = new ClientCredentialsResourceDetails();
 
-		resource.setAccessTokenUri(serverRunning.getUrl("/sparklr2/oauth/token"));
+		resource.setAccessTokenUri(serverRunning.getUrl("/sparklr/oauth/token"));
 		resource.setClientId("my-client-with-registered-redirect");
 		resource.setId("sparklr");
 		resource.setScope(Arrays.asList("trust"));
@@ -38,7 +38,7 @@ public class TestClientCredentialsGrant {
 
 		// TODO: should this work? The client id is different.
 		OAuth2RestTemplate template = new OAuth2RestTemplate(resource, new DefaultOAuth2ClientContext(accessToken));
-		String result = template.getForObject(serverRunning.getUrl("/sparklr2/photos/trusted/message"), String.class);
+		String result = template.getForObject(serverRunning.getUrl("/sparklr/photos/trusted/message"), String.class);
 		// System.err.println(result);
 		assertEquals("Hello, Trusted Client", result);
 
@@ -49,7 +49,7 @@ public class TestClientCredentialsGrant {
 
 		// tonr is a trusted client of sparklr for this resource
 		RestTemplate template = new RestTemplate();
-		String result = template.getForObject(serverRunning.getUrl("/tonr2/trusted/message"), String.class);
+		String result = template.getForObject("http://localhost:8080/tonr/trusted/message", String.class);
 		// System.err.println(result);
 		assertEquals("{\"message\":\"Hello, Trusted Client\"}", result);
 

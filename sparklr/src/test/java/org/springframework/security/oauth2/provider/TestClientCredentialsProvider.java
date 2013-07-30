@@ -122,7 +122,7 @@ public class TestClientCredentialsProvider {
 		}
 		// System.err.println(responseHeaders);
 		String header = responseHeaders.getFirst("WWW-Authenticate");
-		assertTrue("Wrong header: " + header, header.contains("Form realm"));
+		assertTrue("Wrong header: " + header, header.contains("invalid_client"));
 		assertEquals(HttpStatus.UNAUTHORIZED, responseStatus);
 	}
 
@@ -132,7 +132,7 @@ public class TestClientCredentialsProvider {
 			setScope(Arrays.asList("read"));
 			setId(getClientId());
 			TestClientCredentialsProvider test = (TestClientCredentialsProvider) target;
-			setAccessTokenUri(test.serverRunning.getUrl("/sparklr2/oauth/token"));
+			setAccessTokenUri(test.serverRunning.getUrl("/sparklr/oauth/token"));
 			test.resource = this;
 		}
 	}
@@ -149,7 +149,7 @@ public class TestClientCredentialsProvider {
 			setClientId("my-client-with-registered-redirect");
 			setId(getClientId());
 			TestClientCredentialsProvider test = (TestClientCredentialsProvider) target;
-			setAccessTokenUri(test.serverRunning.getUrl("/sparklr2/oauth/token"));
+			setAccessTokenUri(test.serverRunning.getUrl("/sparklr/oauth/token"));
 		}
 	}
 

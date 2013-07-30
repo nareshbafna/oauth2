@@ -75,11 +75,11 @@
 	</http>
 
 	<bean id="oauthAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
-		<property name="realmName" value="sparklr2" />
+		<property name="realmName" value="sparklr" />
 	</bean>
 
 	<bean id="clientAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
-		<property name="realmName" value="sparklr2/client" />
+		<property name="realmName" value="sparklr/client" />
 		<property name="typeName" value="Basic" />
 	</bean>
 
@@ -124,9 +124,6 @@
 		<property name="clientDetailsService" ref="clientDetails" />
 	</bean>
 
-	<bean id="requestFactory" class="org.springframework.security.oauth2.provider.DefaultOAuth2RequestFactory">
-		<constructor-arg name="clientDetailsService" ref="clientDetails" />
-	</bean>
 
 	<bean id="userApprovalHandler" class="org.springframework.security.oauth.examples.sparklr.oauth.SparklrUserApprovalHandler">
 		<property name="autoApproveClients">
@@ -135,7 +132,6 @@
 			</set>
 		</property>
 		<property name="tokenServices" ref="tokenServices" />
-		<property name="requestFactory" ref="requestFactory" />
 	</bean>
 
 	<oauth:authorization-server client-details-service-ref="clientDetails" token-services-ref="tokenServices"

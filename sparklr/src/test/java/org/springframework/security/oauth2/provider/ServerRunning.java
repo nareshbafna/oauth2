@@ -71,7 +71,7 @@ public class ServerRunning implements MethodRule, RestTemplateHolder {
 
 	private final boolean assumeOnline;
 
-	private static int DEFAULT_PORT = 8080;
+	private static int DEFAULT_PORT = 8090;
 
 	private static String DEFAULT_HOST = "localhost";
 
@@ -136,7 +136,7 @@ public class ServerRunning implements MethodRule, RestTemplateHolder {
 		HttpURLConnection.setFollowRedirects(false);
 		boolean online = false;
 		try {
-			client.getForEntity(new UriTemplate(getUrl("/sparklr2/login.jsp")).toString(), String.class);
+			client.getForEntity(new UriTemplate(getUrl("/sparklr/login.jsp")).toString(), String.class);
 			online = true;
 			logger.info("Basic connectivity test passed");
 		}
@@ -163,7 +163,7 @@ public class ServerRunning implements MethodRule, RestTemplateHolder {
 		}
 
 		final RestOperations savedClient = getRestTemplate();
-		postForStatus(savedClient, "/sparklr2/oauth/uncache_approvals",
+		postForStatus(savedClient, "/sparklr/oauth/uncache_approvals",
 				new LinkedMultiValueMap<String, String>());
 
 		return new Statement() {
@@ -174,7 +174,7 @@ public class ServerRunning implements MethodRule, RestTemplateHolder {
 					base.evaluate();
 				}
 				finally {
-					postForStatus(savedClient, "/sparklr2/oauth/cache_approvals",
+					postForStatus(savedClient, "/sparklr/oauth/cache_approvals",
 							new LinkedMultiValueMap<String, String>());
 				}
 

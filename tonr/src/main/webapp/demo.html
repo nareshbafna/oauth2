@@ -17,14 +17,14 @@
 			jso_configure({
 				"sparklr": {
 					client_id: "tonr",
-					redirect_uri: "http://localhost:8080/tonr2/demo.html",
-					authorization: "http://localhost:8080/sparklr2/oauth/authorize",
+					redirect_uri: "http://localhost:8080/tonr/demo.html",
+					authorization: "http://localhost:8090/sparklr/oauth/authorize",
 				}
 			});
 
 			// Perform a data request
 			$.oajax({
-				url: "http://localhost:8080/sparklr2/photos?format=json",
+				url: "http://localhost:8090/sparklr/photos?format=json",
 				jso_provider: "sparklr", // Will match the config identifier
 				jso_scopes: ["read"], // List of scopes (OPTIONAL)
 				jso_allowia: true, // Allow user interaction (OPTIONAL, default: false) 

@@ -84,13 +84,13 @@ public class TestResourceOwnerPasswordProvider {
 	@Test
 	public void testUnauthenticated() throws Exception {
 		// first make sure the resource is actually protected.
-		assertEquals(HttpStatus.UNAUTHORIZED, serverRunning.getStatusCode("/sparklr2/photos?format=json"));
+		assertEquals(HttpStatus.UNAUTHORIZED, serverRunning.getStatusCode("/sparklr/photos?format=json"));
 	}
 
 	@Test
 	public void testUnauthenticatedErrorMessage() throws Exception {
 		HttpHeaders headers = new HttpHeaders();
-		ResponseEntity<Void> response = serverRunning.getForResponse("/sparklr2/photos?format=json", headers);
+		ResponseEntity<Void> response = serverRunning.getForResponse("/sparklr/photos?format=json", headers);
 		assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
 		String authenticate = response.getHeaders().getFirst("WWW-Authenticate");
 		assertTrue("Wrong header: " + authenticate, authenticate.contains("error=\"unauthorized\""));
@@ -100,7 +100,7 @@ public class TestResourceOwnerPasswordProvider {
 	public void testInvalidTokenErrorMessage() throws Exception {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", "Bearer FOO");
-		ResponseEntity<Void> response = serverRunning.getForResponse("/sparklr2/photos?format=json", headers);
+		ResponseEntity<Void> response = serverRunning.getForResponse("/sparklr/photos?format=json", headers);
 		assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
 		String authenticate = response.getHeaders().getFirst("WWW-Authenticate");
 		assertTrue("Wrong header: " + authenticate, authenticate.contains("error=\"invalid_token\""));
@@ -109,17 +109,17 @@ public class TestResourceOwnerPasswordProvider {
 	@Test
 	@OAuth2ContextConfiguration(ResourceOwner.class)
 	public void testTokenObtainedWithHeaderAuthentication() throws Exception {
-		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr2/photos?format=json"));
+		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr/photos?format=json"));
 		int expiry = context.getAccessToken().getExpiresIn();
 		assertTrue("Expiry not overridden in config: " + expiry, expiry < 1000);
-		assertEquals(new MediaType("application", "json", Charset.forName("UTF-8")), tokenEndpointResponse.getHeaders()
+		assertEquals(new MediaType("application", "json"), tokenEndpointResponse.getHeaders()
 				.getContentType());
 	}
 
 	@Test
 	@OAuth2ContextConfiguration(ResourceOwnerQuery.class)
 	public void testTokenObtainedWithQueryAuthentication() throws Exception {
-		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr2/photos?format=json"));
+		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr/photos?format=json"));
 	}
 
 	@Test
@@ -132,20 +132,20 @@ public class TestResourceOwnerPasswordProvider {
 			assertEquals(HttpStatus.UNAUTHORIZED, e.getStatusCode());
 			List<String> values = tokenEndpointResponse.getHeaders().get("WWW-Authenticate");
 			assertEquals(1, values.size());
-			assertTrue(values.get(0).contains("Basic realm=\"sparklr2/client\""));
+			assertTrue(values.get(0).contains("Basic realm=\"sparklr/client\""));
 		}
 	}
 
 	@Test
 	@OAuth2ContextConfiguration(ResourceOwnerSecretProvidedInForm.class)
 	public void testSecretProvidedInForm() throws Exception {
-		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr2/photos?format=json"));
+		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr/photos?format=json"));
 	}
 
 	@Test
 	@OAuth2ContextConfiguration(ResourceOwnerSecretProvided.class)
 	public void testSecretProvidedInHeader() throws Exception {
-		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr2/photos?format=json"));
+		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr/photos?format=json"));
 	}
 
 	@Test
@@ -171,13 +171,13 @@ public class TestResourceOwnerPasswordProvider {
 
 	@Test
 	public void testUserMessageIsProtectedResource() throws Exception {
-		assertEquals(HttpStatus.UNAUTHORIZED, serverRunning.getStatusCode("/sparklr2/photos/user/message"));
+		assertEquals(HttpStatus.UNAUTHORIZED, serverRunning.getStatusCode("/sparklr/photos/user/message"));
 	}
 
 	@Test
 	@OAuth2ContextConfiguration(ResourceOwnerWithTrustedClient.class)
 	public void testClientRoleBasedSecurity() throws Exception {
-		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr2/photos/user/message"));
+		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr/photos/user/message"));
 	}
 
 	/**
@@ -191,7 +191,7 @@ public class TestResourceOwnerPasswordProvider {
 		// Oddly enough this passes - the payload is a String so the message converter thinks it can handle it
 		// the caller will get a surprise when he finds that the response is not actually XML, but that's a different
 		// story.
-		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr2/photos/user/message", headers));
+		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr/photos/user/message", headers));
 	}
 
 	/**
@@ -202,7 +202,7 @@ public class TestResourceOwnerPasswordProvider {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", String.format("%s %s", OAuth2AccessToken.BEARER_TYPE, "FOO"));
 		headers.setAccept(Arrays.asList(MediaType.valueOf("text/foo")));
-		assertEquals(HttpStatus.NOT_ACCEPTABLE, serverRunning.getStatusCode("/sparklr2/photos/user/message", headers));
+		assertEquals(HttpStatus.NOT_ACCEPTABLE, serverRunning.getStatusCode("/sparklr/photos/user/message", headers));
 	}
 
 	/**
@@ -213,9 +213,9 @@ public class TestResourceOwnerPasswordProvider {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", String.format("Basic %s", new String(Base64.encode("my-trusted-client:".getBytes()))));
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-		ResponseEntity<String> response = serverRunning.getForString("/sparklr2/oauth/token", headers);
+		ResponseEntity<String> response = serverRunning.getForString("/sparklr/oauth/token", headers);
 		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-		assertTrue(response.getBody().contains("invalid_request"));
+		assertTrue(response.getBody().contains("BAD_REQUEST"));
 	}
 
 	static class ResourceOwner extends ResourceOwnerPasswordResourceDetails {
@@ -226,7 +226,7 @@ public class TestResourceOwnerPasswordProvider {
 			setUsername("marissa");
 			setPassword("koala");
 			TestResourceOwnerPasswordProvider test = (TestResourceOwnerPasswordProvider) target;
-			setAccessTokenUri(test.serverRunning.getUrl("/sparklr2/oauth/token"));
+			setAccessTokenUri(test.serverRunning.getUrl("/sparklr/oauth/token"));
 		}
 	}
 

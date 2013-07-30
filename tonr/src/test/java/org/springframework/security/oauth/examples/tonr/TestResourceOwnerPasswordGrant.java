@@ -22,7 +22,7 @@ public class TestResourceOwnerPasswordGrant {
 
 		ResourceOwnerPasswordResourceDetails resource = new ResourceOwnerPasswordResourceDetails();
 
-		resource.setAccessTokenUri(serverRunning.getUrl("/sparklr2/oauth/token"));
+		resource.setAccessTokenUri(serverRunning.getUrl("/sparklr/oauth/token"));
 		resource.setClientId("my-trusted-client");
 		resource.setId("sparklr");
 		resource.setScope(Arrays.asList("trust"));
@@ -30,7 +30,7 @@ public class TestResourceOwnerPasswordGrant {
 		resource.setPassword("koala");
 
 		OAuth2RestTemplate template = new OAuth2RestTemplate(resource);
-		String result = template.getForObject(serverRunning.getUrl("/sparklr2/photos/user/message"), String.class);
+		String result = template.getForObject(serverRunning.getUrl("/sparklr/photos/user/message"), String.class);
 		// System.err.println(result);
 		assertEquals("Hello, Trusted User marissa", result);
 

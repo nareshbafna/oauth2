@@ -38,7 +38,7 @@ public class TestRefreshTokenGrant {
 	public void setup() {
 		resource = new ResourceOwnerPasswordResourceDetails();
 
-		resource.setAccessTokenUri(serverRunning.getUrl("/sparklr2/oauth/token"));
+		resource.setAccessTokenUri(serverRunning.getUrl("/sparklr/oauth/token"));
 		resource.setClientId("my-trusted-client");
 		resource.setId("sparklr");
 		resource.setScope(Arrays.asList("trust"));
@@ -66,7 +66,7 @@ public class TestRefreshTokenGrant {
 		request.setExistingToken(existingToken);
 
 		OAuth2RestTemplate template = new OAuth2RestTemplate(resource, new DefaultOAuth2ClientContext(request));
-		String result = template.getForObject(serverRunning.getUrl("/sparklr2/photos/user/message"), String.class);
+		String result = template.getForObject(serverRunning.getUrl("/sparklr/photos/user/message"), String.class);
 		assertEquals("Hello, Trusted User marissa", result);
 
 		assertFalse("Tokens match so there was no refresh", existingToken.equals(template.getAccessToken()));
