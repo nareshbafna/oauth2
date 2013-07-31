@@ -124,11 +124,31 @@
 		<property name="sparklrTrustedMessageURL" value="${sparklrTrustedMessageURL}" />
 		<property name="sparklrPhotoURLPattern" value="${sparklrPhotoURLPattern}" />
 		<property name="sparklrRestTemplate">
-			<oauth:rest-template resource="sparklr" />
+			<oauth:rest-template resource="sparklr" access-token-provider="accessTokenProvider"/>
 		</property>
 		<property name="trustedClientRestTemplate">
 			<oauth:rest-template resource="trusted" />
 		</property>
 	</bean>
 
+    <bean id="accessTokenProvider" class="org.springframework.security.oauth2.client.token.AccessTokenProviderChain">
+        <property name="clientTokenServices" ref="clientTokenServices" />
+        <constructor-arg>
+            <list>
+                <ref bean="authorizationCodeAccessTokenProvider"></ref>
+                <ref bean="implicitAccessTokenProvider"></ref>
+                <ref bean="resourceOwnerPasswordAccessTokenProvider"></ref>
+                <ref bean="ClientCredentialsAccessTokenProvider"></ref>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="authorizationCodeAccessTokenProvider" class="org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeAccessTokenProvider"></bean>
+    <bean id="implicitAccessTokenProvider" class="org.springframework.security.oauth2.client.token.grant.implicit.ImplicitAccessTokenProvider"></bean>
+    <bean id="resourceOwnerPasswordAccessTokenProvider" class="org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordAccessTokenProvider"></bean>
+    <bean id="ClientCredentialsAccessTokenProvider" class="org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsAccessTokenProvider"></bean>
+
+    <bean id="clientTokenServices" class="org.springframework.security.oauth2.client.token.JdbcClientTokenServices">
+        <constructor-arg ref="jdbcTemplate" />
+    </bean>
 </beans>
