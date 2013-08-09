@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Rule;
@@ -84,13 +85,13 @@ public class TestResourceOwnerPasswordProvider {
 	@Test
 	public void testUnauthenticated() throws Exception {
 		// first make sure the resource is actually protected.
-		assertEquals(HttpStatus.UNAUTHORIZED, serverRunning.getStatusCode("/sparklr/photos?format=json"));
+		assertEquals(HttpStatus.UNAUTHORIZED, serverRunning.getStatusCodeUrl("http://localhost:8100/resource/photos?format=json"));
 	}
 
 	@Test
 	public void testUnauthenticatedErrorMessage() throws Exception {
 		HttpHeaders headers = new HttpHeaders();
-		ResponseEntity<Void> response = serverRunning.getForResponse("/sparklr/photos?format=json", headers);
+		ResponseEntity<Void> response = serverRunning.getForResponseUrl("http://localhost:8100/resource/photos?format=json", headers,Collections.<String, String> emptyMap());
 		assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
 		String authenticate = response.getHeaders().getFirst("WWW-Authenticate");
 		assertTrue("Wrong header: " + authenticate, authenticate.contains("error=\"unauthorized\""));
@@ -100,7 +101,7 @@ public class TestResourceOwnerPasswordProvider {
 	public void testInvalidTokenErrorMessage() throws Exception {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", "Bearer FOO");
-		ResponseEntity<Void> response = serverRunning.getForResponse("/sparklr/photos?format=json", headers);
+		ResponseEntity<Void> response = serverRunning.getForResponseUrl("http://localhost:8100/resource/photos?format=json", headers, Collections.<String, String>emptyMap());
 		assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
 		String authenticate = response.getHeaders().getFirst("WWW-Authenticate");
 		assertTrue("Wrong header: " + authenticate, authenticate.contains("error=\"invalid_token\""));
@@ -109,7 +110,7 @@ public class TestResourceOwnerPasswordProvider {
 	@Test
 	@OAuth2ContextConfiguration(ResourceOwner.class)
 	public void testTokenObtainedWithHeaderAuthentication() throws Exception {
-		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr/photos?format=json"));
+		assertEquals(HttpStatus.OK, serverRunning.getStatusCodeUrl("http://localhost:8100/resource/photos?format=json"));
 		int expiry = context.getAccessToken().getExpiresIn();
 		assertTrue("Expiry not overridden in config: " + expiry, expiry < 1000);
 		assertEquals(new MediaType("application", "json"), tokenEndpointResponse.getHeaders()
@@ -119,7 +120,7 @@ public class TestResourceOwnerPasswordProvider {
 	@Test
 	@OAuth2ContextConfiguration(ResourceOwnerQuery.class)
 	public void testTokenObtainedWithQueryAuthentication() throws Exception {
-		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr/photos?format=json"));
+		assertEquals(HttpStatus.OK, serverRunning.getStatusCodeUrl("http://localhost:8100/resource/photos?format=json"));
 	}
 
 	@Test
@@ -139,13 +140,13 @@ public class TestResourceOwnerPasswordProvider {
 	@Test
 	@OAuth2ContextConfiguration(ResourceOwnerSecretProvidedInForm.class)
 	public void testSecretProvidedInForm() throws Exception {
-		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr/photos?format=json"));
+		assertEquals(HttpStatus.OK, serverRunning.getStatusCodeUrl("http://localhost:8100/resource/photos?format=json"));
 	}
 
 	@Test
 	@OAuth2ContextConfiguration(ResourceOwnerSecretProvided.class)
 	public void testSecretProvidedInHeader() throws Exception {
-		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr/photos?format=json"));
+		assertEquals(HttpStatus.OK, serverRunning.getStatusCodeUrl("http://localhost:8100/resource/photos?format=json"));
 	}
 
 	@Test
@@ -171,13 +172,13 @@ public class TestResourceOwnerPasswordProvider {
 
 	@Test
 	public void testUserMessageIsProtectedResource() throws Exception {
-		assertEquals(HttpStatus.UNAUTHORIZED, serverRunning.getStatusCode("/sparklr/photos/user/message"));
+		assertEquals(HttpStatus.UNAUTHORIZED, serverRunning.getStatusCodeUrl("http://localhost:8100/resource/photos/user/message"));
 	}
 
 	@Test
 	@OAuth2ContextConfiguration(ResourceOwnerWithTrustedClient.class)
 	public void testClientRoleBasedSecurity() throws Exception {
-		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr/photos/user/message"));
+		assertEquals(HttpStatus.OK, serverRunning.getStatusCodeUrl("http://localhost:8100/resource/photos/user/message"));
 	}
 
 	/**
@@ -191,7 +192,7 @@ public class TestResourceOwnerPasswordProvider {
 		// Oddly enough this passes - the payload is a String so the message converter thinks it can handle it
 		// the caller will get a surprise when he finds that the response is not actually XML, but that's a different
 		// story.
-		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr/photos/user/message", headers));
+		assertEquals(HttpStatus.OK, serverRunning.getStatusCodeUrl("http://localhost:8100/resource/photos/user/message", headers));
 	}
 
 	/**
@@ -202,7 +203,7 @@ public class TestResourceOwnerPasswordProvider {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", String.format("%s %s", OAuth2AccessToken.BEARER_TYPE, "FOO"));
 		headers.setAccept(Arrays.asList(MediaType.valueOf("text/foo")));
-		assertEquals(HttpStatus.NOT_ACCEPTABLE, serverRunning.getStatusCode("/sparklr/photos/user/message", headers));
+		assertEquals(HttpStatus.NOT_ACCEPTABLE, serverRunning.getStatusCodeUrl("http://localhost:8100/resource/photos/user/message", headers));
 	}
 
 	/**

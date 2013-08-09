@@ -138,7 +138,7 @@ public class TestAuthorizationCodeProvider {
 	@Test
 	public void testResourceIsProtected() throws Exception {
 		// first make sure the resource is actually protected.
-		assertEquals(HttpStatus.UNAUTHORIZED, serverRunning.getStatusCode("/sparklr/photos?format=json"));
+		assertEquals(HttpStatus.UNAUTHORIZED, serverRunning.getStatusCodeUrl("http://localhost:8100/resource/photos?format=json"));
 	}
 
 	@Test
@@ -177,7 +177,7 @@ public class TestAuthorizationCodeProvider {
 
 		AccessTokenRequest request = context.getAccessTokenRequest();
 		assertNotNull(request.getAuthorizationCode());
-		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr/photos?format=json"));
+		assertEquals(HttpStatus.OK, serverRunning.getStatusCodeUrl("http://localhost:8100/resource/photos?format=json"));
 
 	}
 
@@ -269,7 +269,7 @@ public class TestAuthorizationCodeProvider {
 
 		AccessTokenRequest request = context.getAccessTokenRequest();
 		assertNotNull(request.getAuthorizationCode());
-		assertEquals(HttpStatus.OK, serverRunning.getStatusCode("/sparklr/photos?format=json"));
+		assertEquals(HttpStatus.OK, serverRunning.getStatusCodeUrl("http://localhost:8100/resource/photos?format=json"));
 
 	}
 
@@ -309,7 +309,7 @@ public class TestAuthorizationCodeProvider {
 		resource.setScope(Arrays.asList("trust"));
 		approveAccessTokenGrant("http://anywhere?key=value", true);
 		assertNotNull(context.getAccessToken());
-		ResponseEntity<String> response = serverRunning.getForString("/sparklr/photos?format=json");
+		ResponseEntity<String> response = serverRunning.getForStringUrl("http://localhost:8100/resource/photos?format=json", new HttpHeaders());
 		assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
 		String authenticate = response.getHeaders().getFirst("WWW-Authenticate");
 		assertNotNull(authenticate);
@@ -323,7 +323,7 @@ public class TestAuthorizationCodeProvider {
 		// now make sure an unauthorized request fails the right way.
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", String.format("%s %s", OAuth2AccessToken.BEARER_TYPE, "FOO"));
-		ResponseEntity<String> response = serverRunning.getForString("/sparklr/photos?format=json", headers);
+		ResponseEntity<String> response = serverRunning.getForString("http://localhost:8100/resource/photos?format=json", headers);
 		assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
 
 		String authenticate = response.getHeaders().getFirst("WWW-Authenticate");

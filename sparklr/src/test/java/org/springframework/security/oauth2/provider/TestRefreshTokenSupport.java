@@ -48,7 +48,7 @@ public class TestRefreshTokenSupport {
 	private void verifyTokenResponse(String accessToken, HttpStatus status) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", String.format("%s %s", OAuth2AccessToken.BEARER_TYPE, accessToken));
-		assertEquals(status, serverRunning.getStatusCode("/sparklr/photos?format=json", headers));
+		assertEquals(status, serverRunning.getStatusCodeUrl("http://localhost:8100/resource/photos?format=json", headers));
 	}
 
 	private OAuth2AccessToken refreshAccessToken(String refreshToken) {

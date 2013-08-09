@@ -21,31 +21,11 @@
 	</http>
 
 
-	<http access-denied-page="/login.jsp?authorization_error=true" disable-url-rewriting="true"
-		xmlns="http://www.springframework.org/schema/security">
-		<intercept-url pattern="/oauth/**" access="ROLE_USER" />
-		<intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-
-		<form-login authentication-failure-url="/login.jsp?authentication_error=true" default-target-url="/index.jsp"
-			login-page="/login.jsp" login-processing-url="/login.do" />
-		<logout logout-success-url="/index.jsp" logout-url="/logout.do" />
-		<anonymous />
-	</http>
-
 	<bean id="oauthAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
 		<property name="realmName" value="sparklr" />
 	</bean>
 
-	<bean id="clientAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
-		<property name="realmName" value="sparklr/client" />
-		<property name="typeName" value="Basic" />
-	</bean>
-
 	<bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
-
-	<bean id="clientCredentialsTokenEndpointFilter" class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter">
-		<property name="authenticationManager" ref="clientAuthenticationManager" />
-	</bean>
 
 	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased" xmlns="http://www.springframework.org/schema/beans">
 		<constructor-arg>
@@ -57,19 +37,7 @@
 		</constructor-arg>
 	</bean>
 
-	<authentication-manager id="clientAuthenticationManager" xmlns="http://www.springframework.org/schema/security">
-		<authentication-provider user-service-ref="clientDetailsUserService" />
-	</authentication-manager>
-
-	<authentication-manager alias="authenticationManager" xmlns="http://www.springframework.org/schema/security">
-		<authentication-provider>
-            <jdbc-user-service  id="userDetailsService" data-source-ref="jdbcTemplate" />
-		</authentication-provider>
-	</authentication-manager>
-
-	<bean id="clientDetailsUserService" class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
-		<constructor-arg ref="clientDetails" />
-	</bean>
+	<authentication-manager alias="authenticationManager" xmlns="http://www.springframework.org/schema/security" />
 
 	<bean id="tokenStore" class="org.springframework.security.oauth2.provider.token.JdbcTokenStore">
         <constructor-arg ref="jdbcTemplate" />
@@ -91,17 +59,6 @@
 	</bean>
 
 
-	<bean id="userApprovalHandler" class="org.springframework.security.oauth.examples.sparklr.oauth.SparklrUserApprovalHandler">
-		<property name="autoApproveClients">
-			<set>
-				<value>my-less-trusted-autoapprove-client</value>
-			</set>
-		</property>
-		<property name="tokenServices" ref="tokenServices" />
-	</bean>
-
-
-
 	<oauth:resource-server id="resourceServerFilter" resource-id="sparklr" token-services-ref="tokenServices" />
 
     <bean id="clientDetails" class="org.springframework.security.oauth2.provider.JdbcClientDetailsService">
@@ -120,44 +77,9 @@
 
 	<oauth:expression-handler id="oauthExpressionHandler" />
 
-	<oauth:web-expression-handler id="oauthWebExpressionHandler" />
-
-	<!--Basic application beans. -->
-	<bean id="viewResolver" class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
-		<property name="mediaTypes">
-			<map>
-				<entry key="json" value="application/json" />
-			</map>
-		</property>
-		<property name="viewResolvers">
-			<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-				<property name="prefix" value="/WEB-INF/jsp/"></property>
-				<property name="suffix" value=".jsp"></property>
-			</bean>
-		</property>
-		<property name="defaultViews">
-			<bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
-				<property name="extractValueFromSingleKeyModel" value="true" />
-			</bean>
-		</property>
-	</bean>
 
 	<bean id="photoController" class="org.springframework.security.oauth.examples.sparklr.mvc.PhotoController">
 		<property name="photoService" ref="photoServices" />
-	</bean>
-
-	<bean id="photoServiceUserController" class="org.springframework.security.oauth.examples.sparklr.mvc.PhotoServiceUserController">
-		<property name="userDetailsService" ref="userDetailsService" />
-	</bean>
-
-	<bean id="adminController" class="org.springframework.security.oauth.examples.sparklr.mvc.AdminController">
-		<property name="tokenServices" ref="tokenServices" />
-		<property name="userApprovalHandler" ref="userApprovalHandler" />
-	</bean>
-
-	<!-- Override the default mappings for approval and error pages -->
-	<bean id="accessConfirmationController" class="org.springframework.security.oauth.examples.sparklr.mvc.AccessConfirmationController">
-		<property name="clientDetailsService" ref="clientDetails" />
 	</bean>
 
 	<bean id="photoServices" class="org.springframework.security.oauth.examples.sparklr.impl.PhotoServiceImpl">

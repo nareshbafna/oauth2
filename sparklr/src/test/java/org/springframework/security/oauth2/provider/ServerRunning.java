@@ -273,6 +273,10 @@ public class ServerRunning implements MethodRule, RestTemplateHolder {
 		return client.exchange(getUrl(path), HttpMethod.GET, new HttpEntity<Void>((Void) null, headers), String.class);
 	}
 
+    public ResponseEntity<String> getForStringUrl(String url, final HttpHeaders headers) {
+    		return client.exchange(url, HttpMethod.GET, new HttpEntity<Void>((Void) null, headers), String.class);
+    	}
+
 	public ResponseEntity<String> getForString(String path, final HttpHeaders headers, Map<String, String> uriVariables) {
 		return client.exchange(getUrl(path), HttpMethod.GET, new HttpEntity<Void>((Void) null, headers), String.class,
 				uriVariables);
@@ -283,6 +287,11 @@ public class ServerRunning implements MethodRule, RestTemplateHolder {
 		return client.exchange(getUrl(path), HttpMethod.GET, request, null, uriVariables);
 	}
 
+    public ResponseEntity<Void> getForResponseUrl(String url, final HttpHeaders headers, Map<String, String> uriVariables) {
+    		HttpEntity<Void> request = new HttpEntity<Void>(null, headers);
+    		return client.exchange(url, HttpMethod.GET, request, null, uriVariables);
+    	}
+
 	public ResponseEntity<Void> getForResponse(String path, HttpHeaders headers) {
 		return getForResponse(path, headers, Collections.<String, String> emptyMap());
 	}
@@ -292,9 +301,18 @@ public class ServerRunning implements MethodRule, RestTemplateHolder {
 		return response.getStatusCode();
 	}
 
+    public HttpStatus getStatusCodeUrl(String url, final HttpHeaders headers) {
+    		ResponseEntity<Void> response = getForResponseUrl(url, headers,Collections.<String, String> emptyMap());
+    		return response.getStatusCode();
+    	}
+
 	public HttpStatus getStatusCode(String path) {
 		return getStatusCode(getUrl(path), null);
 	}
+
+    public HttpStatus getStatusCodeUrl(String url) {
+    		return getStatusCode(url, null);
+    	}
 
 	public void setRestTemplate(RestOperations restTemplate) {
 		client = restTemplate;

@@ -40,18 +40,6 @@
 		<expression-handler ref="oauthWebExpressionHandler" />
 	</http>
 
-	<!-- The OAuth2 protected resources are separated out into their own block so we can deal with authorization and error handling 
-		separately. This isn't mandatory, but it makes it easier to control the behaviour. -->
-	<http pattern="/photos/**" create-session="never" entry-point-ref="oauthAuthenticationEntryPoint"
-		access-decision-manager-ref="accessDecisionManager" xmlns="http://www.springframework.org/schema/security">
-		<anonymous enabled="false" />
-		<intercept-url pattern="/photos" access="ROLE_USER,SCOPE_READ" />
-		<intercept-url pattern="/photos/trusted/**" access="ROLE_CLIENT,SCOPE_TRUST" />
-		<intercept-url pattern="/photos/user/**" access="ROLE_USER,SCOPE_TRUST" />
-		<intercept-url pattern="/photos/**" access="ROLE_USER,SCOPE_READ" />
-		<custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
-		<access-denied-handler ref="oauthAccessDeniedHandler" />
-	</http>
 
 	<!-- The OAuth2 protected resources are separated out into their own block so we can deal with authorization and error handling 
 		separately. This isn't mandatory, but it makes it easier to control the behaviour. -->
@@ -156,30 +144,11 @@
     </bean>
 
 
-	<oauth:resource-server id="resourceServerFilter" resource-id="sparklr" token-services-ref="tokenServices" />
-
-	<!--<oauth:client-details-service id="clientDetails">-->
-		<!--<oauth:client client-id="my-trusted-client" authorized-grant-types="password,authorization_code,refresh_token,implicit"-->
-			<!--authorities="ROLE_CLIENT, ROLE_TRUSTED_CLIENT" scope="read,write,trust" access-token-validity="60" />-->
-		<!--<oauth:client client-id="my-trusted-client-with-secret" authorized-grant-types="password,authorization_code,refresh_token,implicit"-->
-			<!--secret="somesecret" authorities="ROLE_CLIENT, ROLE_TRUSTED_CLIENT" />-->
-		<!--<oauth:client client-id="my-client-with-secret" authorized-grant-types="client_credentials" authorities="ROLE_CLIENT"-->
-			<!--scope="read" secret="secret" />-->
-		<!--<oauth:client client-id="my-less-trusted-client" authorized-grant-types="authorization_code,implicit"-->
-			<!--authorities="ROLE_CLIENT" />-->
-		<!--<oauth:client client-id="my-less-trusted-autoapprove-client" authorized-grant-types="implicit"-->
-			<!--authorities="ROLE_CLIENT" scope="read,write,trust" />-->
-		<!--<oauth:client client-id="my-client-with-registered-redirect" authorized-grant-types="authorization_code,client_credentials"-->
-			<!--authorities="ROLE_CLIENT" redirect-uri="http://anywhere?key=value" scope="read,trust" />-->
-		<!--<oauth:client client-id="my-untrusted-client-with-registered-redirect" authorized-grant-types="authorization_code"-->
-			<!--authorities="ROLE_CLIENT" redirect-uri="http://anywhere" scope="read" />-->
-		<!--<oauth:client client-id="tonr" resource-ids="sparklr" authorized-grant-types="authorization_code,implicit"-->
-			<!--authorities="ROLE_CLIENT" scope="read,write" secret="secret" />-->
-	<!--</oauth:client-details-service>-->
-
     <bean id="clientDetails" class="org.springframework.security.oauth2.provider.JdbcClientDetailsService">
             <constructor-arg ref="jdbcTemplate" />
     </bean>
+
+    <oauth:resource-server id="resourceServerFilter" resource-id="sparklr" token-services-ref="tokenServices" />
 
 
 	<mvc:annotation-driven />
@@ -215,13 +184,6 @@
 		</property>
 	</bean>
 
-	<bean id="photoController" class="org.springframework.security.oauth.examples.sparklr.mvc.PhotoController">
-		<property name="photoService" ref="photoServices" />
-	</bean>
-
-	<bean id="photoServiceUserController" class="org.springframework.security.oauth.examples.sparklr.mvc.PhotoServiceUserController">
-		<property name="userDetailsService" ref="userDetailsService" />
-	</bean>
 
 	<bean id="adminController" class="org.springframework.security.oauth.examples.sparklr.mvc.AdminController">
 		<property name="tokenServices" ref="tokenServices" />
@@ -233,47 +195,5 @@
 		<property name="clientDetailsService" ref="clientDetails" />
 	</bean>
 
-	<bean id="photoServices" class="org.springframework.security.oauth.examples.sparklr.impl.PhotoServiceImpl">
-		<property name="photos">
-			<list>
-				<bean class="org.springframework.security.oauth.examples.sparklr.PhotoInfo">
-					<property name="id" value="1" />
-					<property name="name" value="photo1.jpg" />
-					<property name="userId" value="marissa" />
-					<property name="resourceURL" value="/org/springframework/security/oauth/examples/sparklr/impl/resources/photo1.jpg" />
-				</bean>
-				<bean class="org.springframework.security.oauth.examples.sparklr.PhotoInfo">
-					<property name="id" value="2" />
-					<property name="name" value="photo2.jpg" />
-					<property name="userId" value="paul" />
-					<property name="resourceURL" value="/org/springframework/security/oauth/examples/sparklr/impl/resources/photo2.jpg" />
-				</bean>
-				<bean class="org.springframework.security.oauth.examples.sparklr.PhotoInfo">
-					<property name="id" value="3" />
-					<property name="name" value="photo3.jpg" />
-					<property name="userId" value="marissa" />
-					<property name="resourceURL" value="/org/springframework/security/oauth/examples/sparklr/impl/resources/photo3.jpg" />
-				</bean>
-				<bean class="org.springframework.security.oauth.examples.sparklr.PhotoInfo">
-					<property name="id" value="4" />
-					<property name="name" value="photo4.jpg" />
-					<property name="userId" value="paul" />
-					<property name="resourceURL" value="/org/springframework/security/oauth/examples/sparklr/impl/resources/photo4.jpg" />
-				</bean>
-				<bean class="org.springframework.security.oauth.examples.sparklr.PhotoInfo">
-					<property name="id" value="5" />
-					<property name="name" value="photo5.jpg" />
-					<property name="userId" value="marissa" />
-					<property name="resourceURL" value="/org/springframework/security/oauth/examples/sparklr/impl/resources/photo5.jpg" />
-				</bean>
-				<bean class="org.springframework.security.oauth.examples.sparklr.PhotoInfo">
-					<property name="id" value="6" />
-					<property name="name" value="photo6.jpg" />
-					<property name="userId" value="paul" />
-					<property name="resourceURL" value="/org/springframework/security/oauth/examples/sparklr/impl/resources/photo6.jpg" />
-				</bean>
-			</list>
-		</property>
-	</bean>
 
 </beans>
