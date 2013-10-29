@@ -123,7 +123,7 @@ public class TestAuthorizationCodeProvider {
 		MultiValueMap<String, String> formData;
 		formData = new LinkedMultiValueMap<String, String>();
 		formData.add("j_username", "marissa");
-		formData.add("j_password", "koala");
+		formData.add("j_password", "wombat");
 
 		String location = "/sparklr/login.do";
 		ResponseEntity<Void> result = serverRunning.postForStatus(location, formData);
@@ -395,7 +395,7 @@ public class TestAuthorizationCodeProvider {
 
 		MultiValueMap<String, String> formData = new LinkedMultiValueMap<String, String>();
 		formData.add("j_username", "marissa");
-		formData.add("j_password", "koala");
+		formData.add("j_password", "wombat");
 
 		// Should be redirected to the original URL, but now authenticated
 		ResponseEntity<Void> result = serverRunning.postForStatus("/sparklr/login.do", headers, formData);

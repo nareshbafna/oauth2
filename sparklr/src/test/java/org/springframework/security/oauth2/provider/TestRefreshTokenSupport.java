@@ -89,7 +89,7 @@ public class TestRefreshTokenSupport {
 		}
 		formData.add("scope", scope);
 		formData.add("username", "marissa");
-		formData.add("password", "koala");
+		formData.add("password", "wombat");
 		return formData;
 	}
 }

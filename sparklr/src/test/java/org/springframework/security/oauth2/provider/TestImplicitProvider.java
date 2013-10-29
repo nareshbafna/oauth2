@@ -51,7 +51,7 @@ public class TestImplicitProvider {
 		MultiValueMap<String, String> formData;
 		formData = new LinkedMultiValueMap<String, String>();
 		formData.add("j_username", "marissa");
-		formData.add("j_password", "koala");
+		formData.add("j_password", "wombat");
 
 		String location = "/sparklr/login.do";
 		ResponseEntity<Void> result = serverRunning.postForStatus(location, formData);

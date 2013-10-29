@@ -35,7 +35,7 @@ public class TestAdminEndpoints {
 	public void testListTokensByUser() throws Exception {
 		ResponseEntity<String> result = serverRunning.getForString("/sparklr/oauth/users/marissa/tokens");
 		assertEquals(HttpStatus.OK, result.getStatusCode());
-		// System.err.println(result.getBody());
+		System.err.println(result.getBody());
 		assertTrue(result.getBody().contains(context.getAccessToken().getValue()));
 	}
 
@@ -100,7 +100,7 @@ public class TestAdminEndpoints {
 			setId(getClientId());
 			setScope(Arrays.asList("read"));
 			setUsername("marissa");
-			setPassword("koala");
+			setPassword("wombat");
 			TestAdminEndpoints test = (TestAdminEndpoints) target;
 			setAccessTokenUri(test.serverRunning.getUrl("/sparklr/oauth/token"));
 		}

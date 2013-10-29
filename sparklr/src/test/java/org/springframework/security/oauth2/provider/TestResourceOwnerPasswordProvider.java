@@ -113,7 +113,7 @@ public class TestResourceOwnerPasswordProvider {
 		assertEquals(HttpStatus.OK, serverRunning.getStatusCodeUrl("http://localhost:8100/resource/photos?format=json"));
 		int expiry = context.getAccessToken().getExpiresIn();
 		assertTrue("Expiry not overridden in config: " + expiry, expiry < 1000);
-		assertEquals(new MediaType("application", "json"), tokenEndpointResponse.getHeaders()
+		assertEquals(new MediaType("application", "json",Charset.forName("UTF-8")), tokenEndpointResponse.getHeaders()
 				.getContentType());
 	}
 
@@ -216,7 +216,7 @@ public class TestResourceOwnerPasswordProvider {
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 		ResponseEntity<String> response = serverRunning.getForString("/sparklr/oauth/token", headers);
 		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-		assertTrue(response.getBody().contains("BAD_REQUEST"));
+		assertTrue(response.getBody().contains("Missing grant"));
 	}
 
 	static class ResourceOwner extends ResourceOwnerPasswordResourceDetails {
@@ -225,7 +225,7 @@ public class TestResourceOwnerPasswordProvider {
 			setScope(Arrays.asList("read"));
 			setId(getClientId());
 			setUsername("marissa");
-			setPassword("koala");
+			setPassword("wombat");
 			TestResourceOwnerPasswordProvider test = (TestResourceOwnerPasswordProvider) target;
 			setAccessTokenUri(test.serverRunning.getUrl("/sparklr/oauth/token"));
 		}
